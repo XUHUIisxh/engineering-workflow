@@ -1,6 +1,6 @@
 # 工程协作插件包
 
-本目录包含 `engineering-workflow` 0.1.0 的插件清单、工程协作 Skill、13 个原生角色模板、初始化工具及工具测试。
+本目录包含 `engineering-workflow` 0.1.1 的插件清单、工程协作 Skill、13 个原生角色模板、初始化工具及工具测试。
 
 安装与使用见 [仓库 README](../../README.md)。marketplace 分发入口位于仓库根的 `.agents/plugins/marketplace.json`，本包路径相对该分发根解析。
 

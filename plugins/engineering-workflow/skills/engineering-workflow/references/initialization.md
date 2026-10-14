@@ -2,6 +2,19 @@
 
 脚本位于本 Skill 的 `scripts/initialize.py`，使用 Python 3.9+ 标准库；写入模式支持 macOS/Linux 的 POSIX 目录句柄，其他平台拒绝执行不安全的写入降级。以读取到的 Skill 实际位置定位脚本；不要猜缓存目录。项目根由用户上下文确认，不从插件所在工作目录推断。
 
+## 环境准备
+
+初始化不依赖第三方 Python 包。先检查解释器和标准库：
+
+```bash
+python3 --version
+python3 -c 'import argparse, hashlib, json, pathlib; print("Python 标准库可用")'
+```
+
+初始化要求 Python 3.9+；测试要求 Python 3.11+，因为测试使用标准库 `tomllib`。如果没有 Python、版本不足或导入检查失败，必须暂停，不执行下面的初始化命令。
+
+向使用人员说明：需要安装 Python 3.11+，不需要单独安装 `tomllib`、`json` 等 pip 包。使用人员自行安装时，等待其明确完成后重新检查；使用人员要求协助安装时，先检查操作系统、CPU 架构、内存、磁盘空间、现有 Python 和包管理器，再选择官方安装包或系统包管理器。安装后重新执行检查，只有验证通过才能继续。
+
 ```bash
 python3 <Skill实际路径>/scripts/initialize.py --project <项目根> --dry-run
 python3 <Skill实际路径>/scripts/initialize.py --project <项目根> --apply

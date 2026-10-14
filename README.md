@@ -1,8 +1,16 @@
 # 工程协作插件
 
-`engineering-workflow` 是可跨项目复用的 Codex 工程协作插件。通用角色提供方法，项目适配提供架构与技术栈事实，当前任务契约决定修改范围和验收条件。
+面向 Codex 的可复用工程协作插件：通过项目适配、角色分工、任务 Cycle 和可复核证据，让多角色协作在不同技术栈项目中保持边界清晰、过程可追溯。
+
+`engineering-workflow` 将通用协作方法与项目自身事实分开维护：通用角色提供方法，项目适配提供架构与技术栈事实，当前任务契约决定修改范围和验收条件。
 
 一个入口 Skill 提供项目初始化、任务调度和证据验证，配套 7 个能力角色与 6 个治理角色。按任务需要选择角色；角色文件本身不会自动启动多智能体。
+
+## 文档
+
+- [仓库与工作流说明](docs/overview.md)：了解适用场景、核心概念、角色职责和完整使用链路。
+- [初始化与项目适配](plugins/engineering-workflow/skills/engineering-workflow/references/initialization.md)：了解初始化生成的文件、冲突处理与升级边界。
+- [调度与交接](plugins/engineering-workflow/skills/engineering-workflow/references/coordination.md)：了解任务派发、唯一写入人和独立验收要求。
 
 ## 安装
 
@@ -61,7 +69,16 @@ Cycle 保存一次目标的基线、契约、任务、交接和验收。插件�
 
 ## 项目初始化工具
 
-脚本使用 Python 3.9+ 标准库。直接从本仓库执行时，显式指定目标项目根：
+脚本使用 Python 3.9+ 标准库，不需要安装任何第三方 Python 包。运行前先确认解释器：
+
+```bash
+python3 --version
+python3 -c 'import argparse, hashlib, json, pathlib; print("Python 标准库可用")'
+```
+
+初始化要求 Python 3.9+；运行仓库测试要求 Python 3.11+。如果没有 Python，或版本低于当前操作所需版本，应先停止后续初始化，向使用人员说明需要安装 Python 3.11+，等待其自行安装完成；使用人员明确要求协助时，再先检查操作系统、CPU 架构、内存、磁盘空间和可用包管理器，选择合适的安装方式并验证版本。不要通过安装同名 pip 包来替代 Python 标准库。
+
+环境确认后，直接从本仓库执行时，显式指定目标项目根：
 
 ```bash
 python3 plugins/engineering-workflow/skills/engineering-workflow/scripts/initialize.py --project /path/to/project --dry-run
@@ -81,8 +98,10 @@ python3 plugins/engineering-workflow/skills/engineering-workflow/scripts/initial
 python3 -m unittest discover -s plugins/engineering-workflow/tests -v
 ```
 
+如果测试环境只有 Python 3.9 或 3.10，初始化脚本仍可使用，但测试不能宣称完整通过；先安装或切换到 Python 3.11+，再重新执行测试。
+
 生产资源位于 `plugins/engineering-workflow/plugin.json` 与 `plugins/engineering-workflow/skills/`；分发入口为 `.agents/plugins/marketplace.json`。角色模板不作为插件清单的自动注册项，需要逐项目初始化。
 
-当前版本为 0.1.0。写入模式支持 macOS/Linux 的 POSIX 目录句柄；已有 macOS 实测，Linux 尚未执行验证。初始化期间目标目录保持唯一写入人，异常清理为尽力处理。0.1.0 不提供自动升级或卸载迁移；修改生产资源时递增版本，人工比较并备份既有项目文件。安装与文件检查分别验证，不能代替运行时发现、自定义角色名称派发或业务验收。
+当前版本为 0.1.1。写入模式支持 macOS/Linux 的 POSIX 目录句柄；已有 macOS 实测，Linux 尚未执行验证。初始化期间目标目录保持唯一写入人，异常清理为尽力处理。0.1.1 不提供自动升级或卸载迁移；修改生产资源时递增版本，人工比较并备份既有项目文件。安装与文件检查分别验证，不能代替运行时发现、自定义角色名称派发或业务验收。
 
 格式依据：[官方插件文档](https://developers.openai.com/plugins/build/plugins)。

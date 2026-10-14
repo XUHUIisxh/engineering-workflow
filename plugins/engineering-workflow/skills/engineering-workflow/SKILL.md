@@ -7,9 +7,15 @@ description: Use when initializing reusable engineering agent collaboration in a
 
 通用角色提供方法，项目适配提供事实，当前任务契约决定此次路径与验收。先检查用户目标、根 AGENTS.md、工作区差异和 `docs/agent-workflow/project-adapter.json`；保留既有变更和定制角色。
 
+## Python 环境门槛
+
+初始化工具使用 Python 标准库，不需要安装第三方 pip 包。执行初始化或检查前，先运行 `python3 --version` 和标准库导入检查；初始化要求 Python 3.9+，仓库测试要求 Python 3.11+（测试使用标准库 `tomllib`）。
+
+如果找不到 Python、版本不满足当前操作，或标准库检查失败，暂停工作流并告诉使用人员需要安装 Python 3.11+。使用人员选择自行安装时，等待其明确安装完成，再重新检查版本后继续；不要在等待期间运行初始化或写入目标项目。使用人员明确要求协助安装时，先检查操作系统、CPU 架构、内存、磁盘空间、现有解释器和包管理器，再选择安装方式，完成后验证解释器再继续。
+
 ## 选择动作
 
-- **首次接入/更新检查**：读 [初始化说明](references/initialization.md)，定位本 Skill 的 `scripts/initialize.py`，显式传入项目根，先执行 `--dry-run`。用户已要求初始化时继续 `--apply` 和 `--check`；冲突按报告核对，保留现有文件。缺少架构事实时先只读调查并建立适配/任务契约，未知项报告 `NEEDS_CONTEXT`。
+- **首次接入/更新检查**：先按 [初始化说明](references/initialization.md) 完成 Python 环境检查，再定位本 Skill 的 `scripts/initialize.py`，显式传入项目根，先执行 `--dry-run`。用户已要求初始化时继续 `--apply` 和 `--check`；冲突按报告核对，保留现有文件。缺少架构事实时先只读调查并建立适配/任务契约，未知项报告 `NEEDS_CONTEXT`。
 - **启动/继续任务**：先执行 `--check` 核对接入；读适配中的 workflow、conventions、当前角色的 role_documents 及指定 Cycle，再按 [调度与交接](references/coordination.md) 建立或恢复任务。接入校验失败先处理差异。
 - **验收/审查**：读取本次任务契约与交接，独立检查适用门禁；区别工具文件验证、运行时发现和业务验收。未执行标记 `PENDING`，缺上下文为 `NEEDS_CONTEXT`，失败交回责任角色。
 
