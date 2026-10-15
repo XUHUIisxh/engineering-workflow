@@ -81,6 +81,7 @@ def read_adapter(root):
 def source_digest():
     # Hash production resources only. Runtime caches and tests do not define the package.
     paths = [PLUGIN_ROOT / 'plugin.json'] + sorted((PLUGIN_ROOT / 'skills').rglob('*'))
+    paths += sorted((PLUGIN_ROOT / 'hooks').rglob('*'))
     files = {p.relative_to(PLUGIN_ROOT).as_posix(): digest(p.read_bytes())
              for p in paths if p.is_file() and '__pycache__' not in p.parts
              and p.suffix != '.pyc'}

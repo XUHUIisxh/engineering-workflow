@@ -1,14 +1,15 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "engineering-workflow",
-  "version": "0.1.1",
-  "description": "可跨技术栈复用的工程多智能体协作、项目适配和可验证初始化。",
+  "version": "0.2.0",
+  "description": "可分级使用的工程协作、项目适配和可验证初始化，集成 mattpocock-skills。",
   "extensions": {
     "com.openai": {
+      "hooks": "./hooks/hooks.json",
       "interface": {
         "displayName": "工程协作",
-        "shortDescription": "通用角色与项目适配，支持安全初始化、协作调度和证据交接",
-        "longDescription": "将工程协作方法与项目架构分离。提供一个协作 Skill、13 个原生角色模板和无需第三方依赖的初始化工具。",
+        "shortDescription": "简单、一般、工程三级协作，按需调用上游工程技能",
+        "longDescription": "将工程协作方法与项目架构分离。提供分级工作流、13 个原生角色模板和可验证初始化工具，并检查 mattpocock-skills 最低版本。",
         "developerName": "xyButler engineering",
         "category": "Productivity",
         "capabilities": [

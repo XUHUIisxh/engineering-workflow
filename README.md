@@ -4,7 +4,7 @@
 
 `engineering-workflow` 将通用协作方法与项目自身事实分开维护：通用角色提供方法，项目适配提供架构与技术栈事实，当前任务契约决定修改范围和验收条件。
 
-一个入口 Skill 提供项目初始化、任务调度和证据验证，配套 7 个能力角色与 6 个治理角色。按任务需要选择角色；角色文件本身不会自动启动多智能体。
+一个入口 Skill 提供简单、一般、工程三级执行方式，以及项目初始化、任务调度和证据验证，配套 7 个能力角色与 6 个治理角色。按任务需要选择角色；角色文件本身不会自动启动多智能体。
 
 ## 文档
 
@@ -14,28 +14,35 @@
 
 ## 安装
 
-通过 GitHub 安装：
-
-```bash
-codex plugin marketplace add XUHUIisxh/engineering-workflow --ref main
-codex plugin add engineering-workflow@engineering-tools
-codex plugin list --json
-```
-
-本地开发或安装：
+从 GitHub 获取本仓库并联合安装两个插件（Python 3.9+、Codex CLI）：
 
 ```bash
 git clone https://github.com/XUHUIisxh/engineering-workflow.git
 cd engineering-workflow
-codex plugin marketplace add .
-codex plugin add engineering-workflow@engineering-tools
+python3 scripts/install.py
+codex plugin list --json
 ```
 
-选择一种 marketplace 来源。同名 marketplace 已存在时，先用 `codex plugin marketplace list --json` 核对来源再切换。安装后打开新的 Codex 会话，确认技能 `engineering-workflow:engineering-workflow` 可见。
+需要安装已发布的远程 `main` 时：
+
+```bash
+python3 scripts/install.py --remote
+```
+
+安装器默认使用当前检出的源码；`--remote` 使用已发布的远程版本，发布新版本前不适用于验证本地改动。安装器先检查 marketplace 来源是否匹配，再确保 `mattpocock-skills@mattpocock` 至少为 1.3.1 并安装本插件；来源不符时停止，不覆盖用户配置。直接使用 `codex plugin add engineering-workflow@engineering-tools` 只能安装本插件，下一轮 hook 在获得信任后才会补齐上游依赖。安装后在 Codex 中审查并信任插件 hook，打开新会话，确认两个插件均为 enabled 且技能可见。hook 未获信任时，调用本 Skill 仍会执行版本检查。
+
+hook 在每轮用户消息前检查本机已安装版本；达到基线时不联网，低于基线或缺失时才刷新 `mattpocock` marketplace 并尝试更新。更新失败不会覆盖既有 marketplace，也不会调用不满足基线的上游技能。插件升级后当前会话的技能列表可能尚未刷新，此时开启新会话再调用。
 
 ## 使用
 
-在目标业务项目中首次接入：
+简单或一般级直接指定即可：
+
+```text
+使用 $engineering-workflow，按简单级处理“具体问题”。
+使用 $engineering-workflow，按一般级完成“具体需求”。
+```
+
+需要工程级时，在目标业务项目中首次接入：
 
 ```text
 使用 $engineering-workflow 初始化当前项目的工程协作。
@@ -46,7 +53,7 @@ codex plugin add engineering-workflow@engineering-tools
 开始需求：
 
 ```text
-使用 $engineering-workflow，为“具体需求”建立新 Cycle。
+使用 $engineering-workflow，按工程级为“具体需求”建立新 Cycle。
 先调查现有实现和接口，按需要组织实施、测试和独立审查。
 完成实现与验证，部署前等待我的确认。
 ```
@@ -65,7 +72,9 @@ codex plugin add engineering-workflow@engineering-tools
 读取已有契约、交接和验证结果，从未完成任务继续。
 ```
 
-Cycle 保存一次目标的基线、契约、任务、交接和验收。插件安装一次，每个项目接入一次；复用协作方法，项目自行维护架构、接口、目录及验收命令。
+Cycle 保存一次目标的基线、契约、任务、交接和验收。插件安装一次，工程级项目接入一次；复用协作方法，项目自行维护架构、接口、目录及验收命令。
+
+默认按“一般”级处理常规任务；“简单”级直接完成低风险工作，“工程”级才默认使用项目适配、Cycle、角色派发和独立审查。级别控制工作流深度，不改变 Codex 模型的 `model_reasoning_effort`。上游技能仅在可用且满足调用条件时使用；用户显式调用型技能不会被本插件自动触发。安装插件不会自动运行 `setup-matt-pocock-skills` 改写业务仓库。详见 [执行级别](plugins/engineering-workflow/skills/engineering-workflow/references/levels.md)。
 
 ## 项目初始化工具
 
@@ -100,8 +109,8 @@ python3 -m unittest discover -s plugins/engineering-workflow/tests -v
 
 如果测试环境只有 Python 3.9 或 3.10，初始化脚本仍可使用，但测试不能宣称完整通过；先安装或切换到 Python 3.11+，再重新执行测试。
 
-生产资源位于 `plugins/engineering-workflow/plugin.json` 与 `plugins/engineering-workflow/skills/`；分发入口为 `.agents/plugins/marketplace.json`。角色模板不作为插件清单的自动注册项，需要逐项目初始化。
+生产资源位于 `plugins/engineering-workflow/plugin.json`、`skills/` 与 `hooks/`；分发入口为 `.agents/plugins/marketplace.json`。角色模板不作为插件清单的自动注册项，需要按工程级或用户要求逐项目初始化。
 
-当前版本为 0.1.1。写入模式支持 macOS/Linux 的 POSIX 目录句柄；已有 macOS 实测，Linux 尚未执行验证。初始化期间目标目录保持唯一写入人，异常清理为尽力处理。0.1.1 不提供自动升级或卸载迁移；修改生产资源时递增版本，人工比较并备份既有项目文件。安装与文件检查分别验证，不能代替运行时发现、自定义角色名称派发或业务验收。
+当前版本为 0.2.0。写入模式支持 macOS/Linux 的 POSIX 目录句柄；已有 macOS 实测，Linux 尚未执行验证。初始化期间目标目录保持唯一写入人，异常清理为尽力处理。本插件自身不提供自动升级或卸载迁移；既有项目的角色与版本锁需人工比较并备份后迁移。安装与文件检查分别验证，不能代替运行时发现、自定义角色名称派发或业务验收。
 
 格式依据：[官方插件文档](https://developers.openai.com/plugins/build/plugins)。

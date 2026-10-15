@@ -1,0 +1,17 @@
+{
+  "description": "Check the mattpocock-skills minimum version before each user turn.",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$PLUGIN_ROOT/skills/engineering-workflow/scripts/ensure_dependency.py\" --hook",
+            "timeout": 180,
+            "statusMessage": "正在检查工程技能版本"
+          }
+        ]
+      }
+    ]
+  }
+}

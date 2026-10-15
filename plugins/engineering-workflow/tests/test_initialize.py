@@ -143,7 +143,7 @@ class InitializeTests(unittest.TestCase):
         shutil.copytree(SCRIPT.parents[3], updated, ignore=shutil.ignore_patterns('__pycache__'))
         manifest = updated / 'plugin.json'
         value = json.loads(manifest.read_text())
-        value['version'] = '0.2.0'
+        value['version'] = '0.2.1'
         manifest.write_text(json.dumps(value))
         script = updated / 'skills/engineering-workflow/scripts/initialize.py'
         result = subprocess.run([sys.executable, str(script), '--project', str(self.root), '--apply'],
